@@ -1,8 +1,6 @@
 <template>
-    <div class="goods-item">
-    <a href="http://item.meilishuo.com/h5/detail/1m70y5k?acm=3.ms.0_4_1m70y5k.0.13384-69004.s026ur4QK5gf1.t_-sd_117-lc_16">
-    <img :src="goodsItem.show.img" alt />
-    </a>
+    <div class="goods-item" @click="itemClick">    
+    <img :src="goodsItem.show.img" @load="imgageload">
     <div class="goods-info">
         <p>{{goodsItem.title}}</p>
         <span class="price">{{goodsItem.price}}</span>
@@ -21,8 +19,19 @@ export default {
             return {};
         }
         }
+    },
+    methods:{
+        //图片加载完成事件
+        imgageload(){
+            // console.log("imgageload")
+            this.$bus.$emit('itemImageLoad')
+        },
+        itemClick(){
+            // console.log("跳转到详情页")
+            this.$router.push('/detail/'+this.goodsItem.iid)
+        }
     }
-};
+}
 </script>
 
 <style>

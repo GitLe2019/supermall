@@ -33,9 +33,6 @@ export default {
 
 <style>
     .tab-control{
-        position: sticky;
-        top: 44px;
-        z-index: 9;
         display: flex;
         text-align: center;
         height: 40px;
