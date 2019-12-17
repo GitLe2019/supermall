@@ -9,7 +9,7 @@
             <tab-control :titles="['流行','新款','精选']" @tabClick="tabClick" ref="tabControl2"></tab-control>
             <goods-list :goods="showGoods"></goods-list>
         </scroll>
-        <back-top @click.native="backClick" v-show="isShowBackTop"></back-top>
+        <back-top @click.native="backTop" v-show="isShowBackTop"></back-top>
     </div>
 </template>
 
@@ -21,7 +21,7 @@ import Scroll from "components/common/scroll/Scroll"
 
 import TabControl from "components/content/tabControl/TabControl"
 import GoodsList from "components/content/goods/GoodsList"
-import BackTop from "components/content/backtop/BackTop"
+// import BackTop from "components/content/backtop/BackTop"
 
 
 import HomeSwiper from "views/home/childComps/HomeSwiper"
@@ -33,8 +33,14 @@ import {getHomegoods} from "network/home"
 
 import {debounce} from "../../common/utils"
 
+import {imgListenerMixin,backTopMixin} from "../../common/mixin"
+// import {backTopMixin} from "../../common/mixin"
+
+// import {BACK_POSITION} from "../../common/const"
+
 export default {
     name:"Home",
+    mixins:[imgListenerMixin,backTopMixin],
     components:{
         NavBar,
         HomeSwiper,
@@ -42,8 +48,8 @@ export default {
         FeatureView,
         TabControl,
         GoodsList,
-        Scroll,
-        BackTop
+        Scroll
+        
     },
     
     data(){
@@ -56,11 +62,11 @@ export default {
                 'sell':{page:0,list:[]}
             },
             currentType:"pop",
-            isShowBackTop:false,
             tabOffsetTop:0,
             isTabFixed:false,
             //记录离开时的位置信息
             savey:0
+            
         }
     },
     computed:{
@@ -69,11 +75,13 @@ export default {
         }
     },
     activated(){
+        // console.log(this.savey)
         this.$refs.scroll.scrollTo(0,this.savey)
         this.$refs.scroll.refresh()
     },
     deactivated(){
         this.savey = this.$refs.scroll.getScrollY()
+        this.$bus.$off('itemImageLoad')
     },
     created(){
         this.getHomeMultidata()
@@ -81,15 +89,21 @@ export default {
         this.getHomegoods('new')
         this.getHomegoods('sell')
     },
-    mounted(){
-        //监听item中图片加载完成,解决滑动高度不对
-        const refresh = debounce(this.$refs.scroll.refresh,200)
-        this.$bus.$on('itemImageLoad',() => {
-            // console.log('imageload')
-            // this.$refs.scroll.refresh()
-            refresh()
-        })
-    },
+
+    //改用mixin混入技术
+    // mounted(){
+    //     //监听item中图片加载完成,解决滑动高度不对
+    //     const refresh = debounce(this.$refs.scroll.refresh,200)
+    //     this.$bus.$on('itemImageLoad',() => {
+    //         // console.log('imageload')
+    //         // this.$refs.scroll.refresh()
+    //         refresh()
+    //     })
+    //     //对监听事件进行保存
+    //     this.itemImgLisener = () => {
+
+    //     }
+    // },
     methods:{
         // 网络请求方法
         getHomeMultidata(){
@@ -122,14 +136,16 @@ export default {
                     this.currentType='sell'
                     break
             }
+            if (this.$refs.tabControl1 !== undefined){
             this.$refs.tabControl1.currentIndex = index
             this.$refs.tabControl2.currentIndex = index
+            }
         },
         //回到顶部
-        backClick(){
-            console.log(123)
-            this.$refs.scroll.scrollTo(0,0)
-        },
+        // backClick(){
+        //     console.log(123)
+        //     this.$refs.scroll.scrollTo(0,0)
+        // },
         //监听滚动位置
         contentScroll(position){
             // console.log(position)
@@ -140,7 +156,7 @@ export default {
             //     this.isShowBackTop=false
             // }
             //判断backTop是否显示
-            this.isShowBackTop = -position.y>1000
+            this.listenShowBackTop(position)
             //决定tabControl是否吸顶
             this.isTabFixed = -position.y>this.tabOffsetTop
         },
@@ -158,6 +174,7 @@ export default {
         }
     }
 }
+
 </script>
 
 <style scoped>
