@@ -33,14 +33,15 @@ import {getHomegoods} from "network/home"
 
 import {debounce} from "../../common/utils"
 
-import {imgListenerMixin,backTopMixin} from "../../common/mixin"
+import {imgListenerMixin,backTopMixin,tabControlMixin} from "../../common/mixin"
 // import {backTopMixin} from "../../common/mixin"
 
 // import {BACK_POSITION} from "../../common/const"
+// import {tabControlMixin} from "@/common/mixin";
 
 export default {
     name:"Home",
-    mixins:[imgListenerMixin,backTopMixin],
+    mixins:[imgListenerMixin,backTopMixin,tabControlMixin],
     components:{
         NavBar,
         HomeSwiper,
@@ -123,24 +124,24 @@ export default {
             
         })
         },
-        tabClick(index){
-            // console.log(index)
-            switch (index){
-                case 0:
-                    this.currentType='pop'
-                    break
-                case 1:
-                    this.currentType='new'
-                    break
-                case 2:
-                    this.currentType='sell'
-                    break
-            }
-            if (this.$refs.tabControl1 !== undefined){
-            this.$refs.tabControl1.currentIndex = index
-            this.$refs.tabControl2.currentIndex = index
-            }
-        },
+        // tabClick(index){
+        //     // console.log(index)
+        //     switch (index){
+        //         case 0:
+        //             this.currentType='pop'
+        //             break
+        //         case 1:
+        //             this.currentType='new'
+        //             break
+        //         case 2:
+        //             this.currentType='sell'
+        //             break
+        //     }
+        //     if (this.$refs.tabControl1 !== undefined){
+        //     this.$refs.tabControl1.currentIndex = index
+        //     this.$refs.tabControl2.currentIndex = index
+        //     }
+        // },
         //回到顶部
         // backClick(){
         //     console.log(123)
